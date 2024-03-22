@@ -1,0 +1,44 @@
+{
+  "name" : "TGHONG_Data_Quality_check_demo",
+  "jobMode" : "VISUAL",
+  "description" : "",
+  "role" : "arn:aws:iam::721883311572:role/service-role/AWSGlueServiceRole",
+  "executionProperty" : {
+    "maxConcurrentRuns" : 1
+  },
+  "command" : {
+    "name" : "glueetl",
+    "scriptLocation" : "s3://aws-glue-assets-721883311572-ap-northeast-2/scripts/TGHONG_Data_Quality_check_demo.py",
+    "pythonVersion" : "3"
+  },
+  "defaultArguments" : {
+    "--enable-metrics" : "true",
+    "--enable-spark-ui" : "true",
+    "--spark-event-logs-path" : "s3://aws-glue-assets-721883311572-ap-northeast-2/sparkHistoryLogs/",
+    "--enable-job-insights" : "false",
+    "--enable-observability-metrics" : "true",
+    "--enable-glue-datacatalog" : "true",
+    "--enable-continuous-cloudwatch-log" : "true",
+    "--job-bookmark-option" : "job-bookmark-disable",
+    "--job-language" : "python",
+    "--TempDir" : "s3://aws-glue-assets-721883311572-ap-northeast-2/temporary/"
+  },
+  "connections" : {
+    "connections" : [ "tghong_jdbc_mysql" ]
+  },
+  "maxRetries" : 0,
+  "allocatedCapacity" : 5,
+  "timeout" : 2880,
+  "maxCapacity" : 5.0,
+  "glueVersion" : "4.0",
+  "numberOfWorkers" : 5,
+  "workerType" : "G.1X",
+  "executionClass" : "STANDARD",
+  "codeGenConfigurationNodes" : "{\"node-1710742757499\":{\"S3GlueParquetTarget\":{\"Compression\":\"snappy\",\"Inputs\":[\"node-1710742611010\"],\"Name\":\"Amazon S3\",\"PartitionKeys\":[],\"Path\":\"s3://tghong/2024-03-19/origin_default_group/\",\"SchemaChangePolicy\":{\"EnableUpdateCatalog\":false}}},\"node-1710742610819\":{\"Route\":{\"GroupFiltersList\":[{\"Filters\":[],\"GroupName\":\"default_group\",\"LogicalOperator\":\"AND\"},{\"Filters\":[{\"Negated\":false,\"Operation\":\"REGEX\",\"Values\":[{\"Type\":\"CONSTANT\",\"Value\":[\"Failed\"]},{\"Type\":\"COLUMNEXTRACTED\",\"Value\":[\"DataQualityEvaluationResult\"]}]}],\"GroupName\":\"Data_quality_Failed_or\",\"LogicalOperator\":\"OR\"}],\"Inputs\":[\"node-1710742591638\"],\"Name\":\"Conditional Router\"}},\"node-1710306338483\":{\"CatalogSource\":{\"Database\":\"tghong_mysql_crawlers\",\"Name\":\"AWS Glue Data Catalog\",\"Table\":\"hyundai_poc_dt_user_t\"}},\"node-1710742668120\":{\"S3GlueParquetTarget\":{\"Compression\":\"snappy\",\"Inputs\":[\"node-1710742611044\"],\"Name\":\"Amazon S3\",\"PartitionKeys\":[],\"Path\":\"s3://tghong/2024-03-19/origin-failed/\",\"SchemaChangePolicy\":{\"EnableUpdateCatalog\":false}}},\"node-1710311091884\":{\"SelectFromCollection\":{\"Index\":0,\"Inputs\":[\"node-1710474265293\"],\"Name\":\"ruleOutcomes\"}},\"node-1710313413672\":{\"S3GlueParquetTarget\":{\"Compression\":\"snappy\",\"Inputs\":[\"node-1710311091884\"],\"Name\":\"Amazon S3\",\"PartitionKeys\":[],\"Path\":\"s3://tghong/2024-03-19/quality-result/\",\"SchemaChangePolicy\":{\"EnableUpdateCatalog\":false}}},\"node-1710474265293\":{\"EvaluateDataQualityMultiFrame\":{\"AdditionalDataSources\":{},\"AdditionalOptions\":{\"performanceTuning.caching\":\"CACHE_NOTHING\"},\"Inputs\":[\"node-1710306338483\"],\"Name\":\"Evaluate Data Quality\",\"PublishingOptions\":{\"CloudWatchMetricsEnabled\":true,\"ResultsPublishingEnabled\":true,\"ResultsS3Prefix\":\"\"},\"Ruleset\":\"# Example rules: Completeness \\\"colA\\\" between 0.4 and 0.8, ColumnCount > 10\\nRules = [\\n    IsPrimaryKey \\\"dt_no\\\"\\n    , IsComplete \\\"admin_yn\\\"\",\"StopJobOnFailureOptions\":{\"StopJobOnFailureTiming\":\"AfterDataLoad\"}}},\"node-1710742611010\":{\"SelectFromCollection\":{\"Index\":0,\"Inputs\":[\"node-1710742610819\"],\"Name\":\"default_group\"}},\"node-1710742611044\":{\"SelectFromCollection\":{\"Index\":0,\"Inputs\":[\"node-1710742610819\"],\"Name\":\"Data_quality_Failed\"}},\"node-1710742591638\":{\"SelectFromCollection\":{\"Index\":0,\"Inputs\":[\"node-1710474265293\"],\"Name\":\"rowLevelOutcomes\"}}}",
+  "sourceControlDetails" : {
+    "provider" : "GITHUB",
+    "repository" : "test",
+    "branch" : "main",
+    "folder" : "TGHONG_Data_Quality_check_demo"
+  }
+}
